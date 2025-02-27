@@ -4,13 +4,12 @@
   "description": "The backend for notes app",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/index.ts",
-    "start": "node ./src/index.ts",
-    "start:build": "node ./dist/index.ts",
+    "dev": "ts-node ./src/index.ts",
+    "start": "node ./dist/index.js",
     "build": "tsc",
     "postbuild": "copyfiles -u 1 src/**/*.html src/**/*.css dist/"
   },
-  "author": "Kartik Gothwak",
+  "author": "Kartik Gothwal",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
