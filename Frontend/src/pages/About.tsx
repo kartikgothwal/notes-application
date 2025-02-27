@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 
 
 const messages = [
-  `DevNotes is a cloud based Notes app build to store user's notes anytime, anywhere on the cloud with easy access to their notes.`,
+  `Notes is a cloud based Notes app build to store user's notes anytime, anywhere on the cloud with easy access to their notes.`,
   `The App is build using the popular technologies like React JS MongoDB, Express Js and NodeJS.`,
   `Tailwind is Used as the CSS Framework for styling the App.`,
   `shadcn-ui is used as the component library for the App with radix-ui.`,
@@ -26,7 +26,7 @@ const features = [
 const About = () => {
   return (
     <div className="container py-10">
-      <Heading title="DevNotes" description="Your Notes Secured on the Cloud" className="text-center" />
+      <Heading title="Notes" description="Your Notes Secured on the Cloud" className="text-center" />
       <Separator className="mt-5 mb-8" />
       <ul className="flex flex-col max-w-4xl gap-3 mx-auto list-[square]">
         {messages.map((message, i) => (
@@ -34,7 +34,7 @@ const About = () => {
         ))}
 
         <li className="text-lg font-semibold tracking-wider">
-          Some Features of DevNotes
+          Some Features of Notes
           <ul className="flex flex-col gap-2 px-5 py-3 text-base list-disc">
             {features.map((feature, i) => (
               <li key={i} className="text-lg font-semibold tracking-wider">{feature}</li>

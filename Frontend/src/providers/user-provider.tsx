@@ -18,6 +18,7 @@ const initialState: InitialStateType = {
     logIn: () => { },
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const UserContext = createContext(initialState);
 
 
