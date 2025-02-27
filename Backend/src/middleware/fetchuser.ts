@@ -12,7 +12,11 @@ const fetchuser = (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const data = jwt.verify(token, process.env.JWT_SIGNATURE as string);
-    req.user = data.user;
+    if (typeof data !== 'string' && 'user' in data) {
+      req.user = data.user;
+    } else {
+      return res.status(401).json({ success: false, message: "Invalid token" });
+    }
     next();
   } catch (error) {
     return res.status(401).json({ success: false, message: "Please Authenticate using correct Credentials" });

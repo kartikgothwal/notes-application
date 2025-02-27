@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectToMongo from "./db";
+import authRoutes from "./routes/auth";
+import notesRoutes from "./routes/notes";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -16,15 +18,15 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(
   cors({
-    origin: [process.env.FRONTEND_DEV, "http://localhost:3000"],
+    origin: [!process.env.FRONTEND_DEV, "http://localhost:3000"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: false,
   })
 );
 
 // Available Routes
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/notes", require("./routes/notes"));
+app.use("/api/auth", authRoutes);
+app.use("/api/notes", notesRoutes);
 
 app.get("/", (req, res) => {
   res.send("<h1>DevNotes Backend</h1>");

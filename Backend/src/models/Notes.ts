@@ -1,22 +1,15 @@
-import mongoose, { Document, Schema } from 'mongoose';
-
-interface INote extends Document {
-  user: mongoose.Schema.Types.ObjectId;
-  title: string;
-  description: string;
-  tag?: string;
-  date?: Date;
-}
+import mongoose, { Document, Schema } from "mongoose";
+import { INote } from "../types";
 
 const notesSchema: Schema = new Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
-    required: true
+    required: true,
   },
   title: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
@@ -24,7 +17,7 @@ const notesSchema: Schema = new Schema({
   },
   tag: {
     type: String,
-    default: 'general',
+    default: "general",
   },
   date: {
     type: Date,
@@ -32,4 +25,5 @@ const notesSchema: Schema = new Schema({
   },
 });
 
-export default mongoose.model<INote>('notes', notesSchema);
+const Notes = mongoose.model<INote>("notes", notesSchema);
+export default Notes;

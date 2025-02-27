@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import Notes from "../models/Notes";
+import Notes from "../../models/Notes";
 
-export const UpdateNote = async (req: Request, res: Response): Promise<Response> => {
+export const UpdateNote = async (req: Request, res: Response): Promise<any> => {
   const { title, description, tag } = req.body;
   const errors = validationResult(req);
 
@@ -30,20 +30,26 @@ export const UpdateNote = async (req: Request, res: Response): Promise<Response>
       return res.status(404).json({ message: "Not Found" });
     }
 
-    if (note.user.toString() !== req.user.id) {
+    if (!req.user || note.user.toString() !== req.user.id) {
       return res.status(401).json({ message: "Unauthorised: Not Allowed" });
     }
 
-    note = await Notes.findByIdAndUpdate(req.params.id, { $set: newnote }, { new: true });
+    note = await Notes.findByIdAndUpdate(
+      req.params.id,
+      { $set: newnote },
+      { new: true }
+    );
 
     return res.status(200).json({
       message: "Note Updated Successfully",
       note: note,
     });
-  } catch (error) {
+  } catch (error: unknown) {
+    console.error(error);
     return res.status(500).json({
+      success: false,
       message: "Internal Server Error",
-      error: error,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
     });
   }
 };

@@ -2,7 +2,6 @@ import { FC } from "react";
 
 interface headingProps {
   title: string;
-  description: string;
   className?: string;
 }
 

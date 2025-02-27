@@ -6,7 +6,7 @@ import { Request, Response } from "express";
 
 const JWT_SIGNATURE = process.env.JWT_SIGNATURE as string;
 
-export const SignUp = async (req: Request, res: Response): Promise<Response> => {
+export const SignUp = async (req: Request, res: Response): Promise<any> => {
   const errors = validationResult(req);
   let success = false;
 
@@ -22,11 +22,15 @@ export const SignUp = async (req: Request, res: Response): Promise<Response> => 
     let user = await User.findOne({ email: req.body.email });
 
     if (user) {
-      return res.status(400).json({ success, message: "Email is Already Registered" });
+      return res
+        .status(400)
+        .json({ success, message: "Email is Already Registered" });
     }
 
     if (req.body.password !== req.body.cpassword) {
-      return res.status(400).json({ success, message: "Password does not match" });
+      return res
+        .status(400)
+        .json({ success, message: "Password does not match" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -50,12 +54,16 @@ export const SignUp = async (req: Request, res: Response): Promise<Response> => 
       message: "User Registered Successfully",
       authToken,
     });
-  } catch (error) {
-    console.log(error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    } else {
+      console.log("An unknown error occurred");
+    }
     return res.status(500).json({
       success,
       message: "Internal Server Error",
-      errors: error.message,
+      errors: error instanceof Error ? error.message : "An unknown error occurred",
     });
   }
 };

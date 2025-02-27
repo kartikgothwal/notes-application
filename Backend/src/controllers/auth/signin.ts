@@ -3,9 +3,9 @@ import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../../models/Users";
-import { JWT_SIGNATURE } from "../../config"; // Assuming you have a config file for constants
+const JWT_SIGNATURE = process.env.JWT_SIGNATURE as string;
 
-export const SignIn = async (req: Request, res: Response): Promise<Response> => {
+export const SignIn = async (req: Request, res: Response): Promise<any> => {
   const errors = validationResult(req);
   let success = false;
 
@@ -23,13 +23,17 @@ export const SignIn = async (req: Request, res: Response): Promise<Response> => 
     const user = await User.findOne({ email: email });
 
     if (!user) {
-      return res.status(400).json({ success, message: "try to log in with correct credentials" });
+      return res
+        .status(404)
+        .json({ success, message: "try to log in with correct credentials" });
     }
 
     const comparePassword = await bcrypt.compare(password, user.password);
 
     if (!comparePassword) {
-      return res.status(400).json({ success, message: "try to log in with correct credentials" });
+      return res
+        .status(401)
+        .json({ success, message: "try to log in with correct credentials" });
     }
 
     const data = {
@@ -48,6 +52,8 @@ export const SignIn = async (req: Request, res: Response): Promise<Response> => 
       data,
     });
   } catch (error) {
-    return res.status(500).json({ success, message: "Internal Server Error", errors: error });
+    return res
+      .status(500)
+      .json({ success, message: "Internal Server Error", errors: error });
   }
 };

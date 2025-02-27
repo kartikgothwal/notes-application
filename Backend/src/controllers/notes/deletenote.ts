@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import Notes from "../models/Notes";
+import Notes from "../../models/Notes";
 
-export const DeleteNote = async (req: Request, res: Response): Promise<Response> => {
+export const DeleteNote = async (req: Request, res: Response): Promise<any> => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -17,7 +17,7 @@ export const DeleteNote = async (req: Request, res: Response): Promise<Response>
       return res.status(404).json({ message: "Not Found" });
     }
 
-    if (note.user.toString() !== req.user.id) {
+    if (!req.user || note.user.toString() !== req.user.id) {
       return res.status(401).json({ message: "Unauthorised: Not Allowed" });
     }
 
@@ -28,11 +28,12 @@ export const DeleteNote = async (req: Request, res: Response): Promise<Response>
       message: "Note deleted successfully",
       note: note,
     });
-  } catch (error) {
+  } catch (error: unknown) {
+    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
-      error: error,
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     });
   }
 };

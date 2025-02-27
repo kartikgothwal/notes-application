@@ -7,24 +7,41 @@ export const AddNote = async (req: Request, res: Response): Promise<Response> =>
   const errors = validationResult(req);
   
   if (!errors.isEmpty()) {
-    return res.status(500).json({
-      message: "Internal Server Error",
-      error: errors,
+    return res.status(400).json({
+      success: false,
+      message: "Validation Error",
+      errors: errors.array()
     });
   }
 
   try {
-    const note = new Notes({ title, description, tag, user: req.user.id });
-    const savenotes = await note.save();
-    
-    return res.status(200).json({
-      message: "Note added successfully",
-      note: savenotes,
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated"
+      });
+    }
+
+    const note = new Notes({
+      title,
+      description,
+      tag,
+      user: req.user.id
     });
-  } catch (error) {
+    
+    const savedNote = await note.save();
+    
+    return res.status(201).json({
+      success: true,
+      message: "Note added successfully",
+      note: savedNote
+    });
+  } catch (error: unknown) {
+    console.error(error);
     return res.status(500).json({
+      success: false,
       message: "Internal Server Error",
-      error: error,
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     });
   }
 };
