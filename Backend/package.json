@@ -4,8 +4,8 @@
   "description": "The backend for notes app",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node ./src/index.ts",
-    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.ts",
+    "start": "node dist/index.js",
     "build": "tsc",
     "postbuild": "copyfiles -u 1 src/**/*.html src/**/*.css dist/"
   },
