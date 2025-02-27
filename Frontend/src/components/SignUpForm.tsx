@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 
-const HOST = import.meta.env.VITE_HOST;
+const HOST = import.meta.env.BACKEND_URI;
 console.log("🚀 ~ HOST:", HOST);
 
 const passwordSchema = z
