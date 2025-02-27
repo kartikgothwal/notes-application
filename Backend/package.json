@@ -4,10 +4,11 @@
   "description": "The backend for notes app",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/index.ts",
-    "start": "node dist/index.js",
     "build": "tsc",
-    "postbuild": "copyfiles -u 1 src/**/*.html src/**/*.css dist/"
+    "dev": "nodemon src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/index.js",
+    "prestart": "npm run build"
   },
   "author": "Kartik Gothwal",
   "license": "ISC",
