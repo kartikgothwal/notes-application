@@ -11,8 +11,11 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(
   cors({
-    origin: [process.env.FRONTEND_DEV, process.env.FRONTEND],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    origin: [process.env.FRONTEND_URL, "http://localhost:3000"],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "Access-Control-Allow-Header":
+      "Origin, X-Requested-With, Content-Type, Accept",
+    credentials: false,
   })
 );
 
@@ -29,12 +32,11 @@ if (
   // app.get('(/*)?', (req, res) => {
   //   res.sendFile(path.join(buildPath, "index.html"));
   // });
-
-  app.get("/", (req, res) => {
-    res.send("<h1>DevNotes Backend</h1>");
-  });
 }
+app.get("/", (req, res) => {
+  res.send("<h1>DevNotes Backend</h1>");
+});
 
 app.listen(port, () => {
-  console.log(`DevNotes Backend listening at port http://localhost:${port}`);
+  console.log(`Backend listening at port http://localhost:${port}`);
 });
