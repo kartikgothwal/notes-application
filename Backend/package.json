@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node ./src/index.ts",
-    "start": "node ./dist/index.js",
+    "start": "node ./src/index.js",
     "build": "tsc",
     "postbuild": "copyfiles -u 1 src/**/*.html src/**/*.css dist/"
   },
