@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectToMongo from "./db";
@@ -28,7 +28,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/notes", notesRoutes);
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res:Response) => {
   res.send("<h1>DevNotes Backend</h1>");
 });
 
