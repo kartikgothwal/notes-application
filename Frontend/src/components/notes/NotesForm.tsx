@@ -26,11 +26,11 @@ const formSchema = z.object({
     .string()
     .min(3, "Title should be atleast 3 characters")
     .max(35, "Title can only have a maximum of 35 characters"),
-  description: z
+  content: z
     .string()
     .min(10, "Description should be atleast 10 characters")
     .max(120, "Description can only have a maximum of 120 characters"),
-  tag: z
+  category: z
     .string()
     .min(3, "Tag should be atleast 3 characters")
     .max(8, "Tag can only have a maximum of 8 characters"),
@@ -52,8 +52,8 @@ const NotesForm: FC<NotesFormProps> = ({ initialData, handleSubmit }) => {
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       title: "",
-      description: "",
-      tag: "general",
+      content: "",
+      category: "general",
     },
   });
 
@@ -113,10 +113,10 @@ const NotesForm: FC<NotesFormProps> = ({ initialData, handleSubmit }) => {
             />
             <FormField
               control={form.control}
-              name="tag"
+              name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tag</FormLabel>
+                  <FormLabel>Category</FormLabel>
                   <FormControl>
                     <Input disabled={loading} placeholder="Tag" {...field} />
                   </FormControl>
@@ -127,14 +127,14 @@ const NotesForm: FC<NotesFormProps> = ({ initialData, handleSubmit }) => {
           </div>
           <FormField
             control={form.control}
-            name="description"
+            name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Content</FormLabel>
                 <FormControl>
                   <Textarea
                     disabled={loading}
-                    placeholder="Description"
+                    placeholder="Content"
                     rows={10}
                     cols={10}
                     {...field}

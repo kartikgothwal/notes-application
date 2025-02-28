@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import Notes from "../../models/Notes";
 
 export const UpdateNote = async (req: Request, res: Response): Promise<any> => {
-  const { title, description, tag } = req.body;
+  const { title, content, category } = req.body;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -14,15 +14,15 @@ export const UpdateNote = async (req: Request, res: Response): Promise<any> => {
   }
 
   try {
-    const newnote: { title?: string; description?: string; tag?: string } = {};
+    const newnote: { title?: string; content?: string; category?: string } = {};
     if (title) {
       newnote.title = title;
     }
-    if (description) {
-      newnote.description = description;
+    if (content) {
+      newnote.content = content;
     }
-    if (tag) {
-      newnote.tag = tag;
+    if (category) {
+      newnote.category = category;
     }
 
     let note = await Notes.findById(req.params.id);

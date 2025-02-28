@@ -6,11 +6,11 @@ import Footer from "@/components/Footer";
 import Providers from "@/providers";
 
 import "./App.css";
-
 const Home = lazy(() => import("@/pages/Home"));
 const About = lazy(() => import("@/pages/About"));
 const SignUp = lazy(() => import("@/pages/SignUp"));
 const Login = lazy(() => import("@/pages/Login"));
+const Profile = lazy(() => import("@/pages/Profile"));
 
 const App = () => {
   return (
@@ -24,6 +24,7 @@ const App = () => {
               <Route path="/about" element={<About />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/profile" element={<Profile />} />
             </Routes>
           </Suspense>
         </div>

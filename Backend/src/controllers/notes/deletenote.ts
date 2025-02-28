@@ -33,7 +33,7 @@ export const DeleteNote = async (req: Request, res: Response): Promise<any> => {
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error.message : "Unknown error occurred",
     });
   }
 };
