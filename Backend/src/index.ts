@@ -18,7 +18,7 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(
   cors({
-    origin: [!process.env.FRONTEND_DEV, "http://localhost:3000"],
+    origin: ["*"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: false,
   })
@@ -28,7 +28,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/notes", notesRoutes);
 
-app.get("/", (req: Request, res:Response) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("<h1>DevNotes Backend</h1>");
 });
 
