@@ -14,17 +14,9 @@ connectToMongo();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Middleware
 app.use(express.json());
-app.use(
-  cors({
-    origin: ["*"],
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: false,
-  })
-);
+app.use(cors());
 
-// Available Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/notes", notesRoutes);
 
@@ -32,7 +24,6 @@ app.get("/", (req: Request, res: Response) => {
   res.send("<h1>DevNotes Backend</h1>");
 });
 
-// Start the server
 app.listen(port, () => {
   console.log(`Backend listening at http://localhost:${port}`);
 });
