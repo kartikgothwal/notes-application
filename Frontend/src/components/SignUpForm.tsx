@@ -20,8 +20,7 @@ import { Button } from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 
-const HOST = import.meta.env.BACKEND_URI;
-console.log("🚀 ~ HOST:", HOST);
+const HOST = import.meta.env.VITE_BACKEND_URI;
 
 const passwordSchema = z
   .string()
@@ -69,7 +68,6 @@ const SignUpForm = () => {
   };
 
   const onSubmit = async (data: SignUpFormValues) => {
-    console.log("🚀 ~ onSubmit ~ data:", data);
     try {
       setLoading(true);
       const options = {

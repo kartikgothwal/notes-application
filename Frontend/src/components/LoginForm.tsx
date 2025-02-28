@@ -20,7 +20,7 @@ import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff } from "lucide-react";
 
-const HOST = import.meta.env.VITE_BACKEND_URI;
+const HOST = import.meta.env.VITE_VITE_BACKEND_URI;
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid Email Address"),

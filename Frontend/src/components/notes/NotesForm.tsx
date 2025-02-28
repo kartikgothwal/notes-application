@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { NoteContext } from "@/providers/note-provider";
 import { Note } from "@/types";
 
-const HOST = import.meta.env.BACKEND_URI;
+const HOST = import.meta.env.VITE_BACKEND_URI;
 
 const formSchema = z.object({
   title: z

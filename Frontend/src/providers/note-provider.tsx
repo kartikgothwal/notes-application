@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 
 import { Note } from "@/types";
 
-const HOST = import.meta.env.BACKEND_URI;
+const HOST = import.meta.env.VITE_BACKEND_URI;
 
 interface InitialDataType {
   notes: Note[] | null;
