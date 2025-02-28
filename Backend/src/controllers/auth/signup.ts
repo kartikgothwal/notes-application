@@ -63,7 +63,8 @@ export const SignUp = async (req: Request, res: Response): Promise<any> => {
     return res.status(500).json({
       success,
       message: "Internal Server Error",
-      errors: error instanceof Error ? error.message : "An unknown error occurred",
+      errors:
+        error instanceof Error ? error.message : "An unknown error occurred",
     });
   }
 };

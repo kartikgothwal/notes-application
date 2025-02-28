@@ -21,7 +21,6 @@ import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff } from "lucide-react";
 
 const HOST = import.meta.env.VITE_BACKEND_URI;
-console.log("🚀 ~ HOST:", HOST);
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid Email Address"),
@@ -62,6 +61,8 @@ const LoginForm = () => {
       };
       const res = await axios.post(`${HOST}/api/auth/login`, data, options);
       localStorage.setItem("token", res.data.authToken);
+      console.log("🚀 ~ onSubmit ~ res:", res);
+      localStorage.setItem("userId", res?.data?.id);
 
       toast.success(res.data.message);
       navigate("/");

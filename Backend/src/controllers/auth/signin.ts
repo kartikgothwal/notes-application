@@ -31,9 +31,7 @@ export const SignIn = async (req: Request, res: Response): Promise<any> => {
     const comparePassword = await bcrypt.compare(password, user.password);
 
     if (!comparePassword) {
-      return res
-        .status(401)
-        .json({ success, message: "try to log in with correct credentials" });
+      return res.status(401).json({ success, message: "Incorrect Password" });
     }
 
     const data = {
@@ -49,7 +47,7 @@ export const SignIn = async (req: Request, res: Response): Promise<any> => {
       success,
       message: "User Logged In Successfully",
       authToken,
-      data,
+      id: user.id,
     });
   } catch (error) {
     return res

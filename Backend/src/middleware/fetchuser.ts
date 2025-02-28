@@ -7,12 +7,10 @@ dotenv.config();
 const fetchuser = (req: Request, res: Response, next: NextFunction) => {
   const token = req.header("auth-token");
   if (!token) {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        message: "Please Authenticate using correct Credentials",
-      });
+    return res.status(401).json({
+      success: false,
+      message: "Please Authenticate using correct Credentials",
+    });
   }
 
   try {
@@ -24,12 +22,10 @@ const fetchuser = (req: Request, res: Response, next: NextFunction) => {
     }
     next();
   } catch (error) {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        message: "Please Authenticate using correct Credentials",
-      });
+    return res.status(401).json({
+      success: false,
+      message: "Please Authenticate using correct Credentials",
+    });
   }
 };
 

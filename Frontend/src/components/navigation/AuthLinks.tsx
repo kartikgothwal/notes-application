@@ -10,6 +10,7 @@ const AuthLinks = () => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     ToasterSuccess("Logged Out Successfully");
     navigate("/login");
   };

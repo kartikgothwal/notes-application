@@ -9,6 +9,7 @@ interface InitialDataType {
   notes: Note[] | null;
   deleteNote: (id: string) => void;
   fetchNotes: () => void;
+  searchNote: (query: string) => void;
 }
 
 const notes: Note[] = [];
@@ -16,8 +17,10 @@ const initialData: InitialDataType = {
   notes,
   deleteNote: () => {},
   fetchNotes: () => {},
+  searchNote: () => {},
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const NoteContext = createContext(initialData);
 
 interface NoteProviderProps {
@@ -57,9 +60,25 @@ const NoteProvider: FC<NoteProviderProps> = ({ children }) => {
       toast.error(json.message);
     }
   };
-
+  const searchNote = async (value: string) => {
+    const response = await fetch(
+      `${HOST}/api/notes/fetchallnotes?search=${value}`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+    const json = await response.json();
+    if (json.success) {
+      if (json.notes.length) {
+        setNotes(json.notes);
+      }
+    } else {
+      toast.error(json.message);
+    }
+  };
   return (
-    <NoteContext.Provider value={{ notes, deleteNote, fetchNotes }}>
+    <NoteContext.Provider value={{ notes, deleteNote, fetchNotes, searchNote }}>
       {children}
     </NoteContext.Provider>
   );

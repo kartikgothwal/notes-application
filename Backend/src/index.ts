@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectToMongo from "./db";
 import authRoutes from "./routes/auth";
 import notesRoutes from "./routes/notes";
+import userRoutes from "./routes/user";
 import helmet from "helmet";
 
 // Load environment variables from .env file
@@ -20,7 +21,7 @@ app.use(helmet());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/notes", notesRoutes);
-
+app.use("/api/user", userRoutes);
 app.get("/", (req: Request, res: Response) => {
   res.send("<h1>DevNotes Backend</h1>");
 });
