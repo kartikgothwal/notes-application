@@ -1,30 +1,43 @@
-# Dev_Notes : Secured on the cloud
+# Notes Management App
 
-### Dev_Notes is a Notes App created using MERN Stack, to help users store their notes, and access it anywhere anytime.
+## Features
 
----
+### Core Features
+- Users can perform **CRUD (Create, Read, Update, Delete) operations** on their notes.
+- Each note consists of:
+  - **Title (required)**
+  - **Content (optional)**
+  - **Timestamps** for creation and last update
+  - **Category** for filtering notes
 
-### Technologies Used:
+### Back-End
+- Built using **Node.js** and **Express.js** with an **MVC (Model-View-Controller)** structure:
+  - **Models:** Defines schemas for users and notes using **Mongoose**.
+  - **Controllers:** Handles CRUD logic and user authentication.
+  - **Routes:** RESTful APIs for managing users and notes.
+- Authentication handled with **JWT (JSON Web Token)**.
+- Secure password hashing using **bcrypt**.
+- **Input validation** and **sanitization** for security.
 
-#### Frontend:
+### Database
+- Uses **MongoDB** to store user data and notes.
 
-- ReactJS
-- Styling: [ Tailwind CSS, clsx, class-variance-authority, tailwind-merge, tailwindcss-animate ]
-- UI: [ shadcn-ui, radix-ui, next-themes, react-hot-toast ]
-- Validation: [ Typescript, zod, use-form ]
-- Icons: [ lucide-react ]
-- axios
+### Front-End
+- Built with **React.js** and **React Router** for a modular UI.
+- Features include:
+  - **Login/Sign Up** page
+  - **Dashboard** for CRUD operations and search functionality
+  - **Profile** page for updating user info
+- Ensures a clean and responsive UI using **Bootstrap** or **Tailwind CSS**.
 
-#### Backend:
+### Security
+- JWT Middleware for route security.
+- Uses **Helmet.js** for secure HTTP headers.
+- **CORS configured** for trusted origins.
 
-- NodeJS
-- ExpressJs
-- MongoDb
-- mongoose
-- bcryptjs
-- jsonwebtoken
-
----
+### Bonus Features
+- **Filtering notes** by category.
+- **Dark mode toggle** for UI customization.
 
 ## Getting Started with the Project
 
