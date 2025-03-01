@@ -3,17 +3,11 @@ import { LogIn, LogOut, UserPlus2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import ToolTipBox from "@/components/ui/tool-tip-box";
-import { ToasterSuccess } from "@/utils/toast";
+import { useAuth } from "../context/AuthContext";
 
 const AuthLinks = () => {
   const navigate = useNavigate();
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    ToasterSuccess("Logged Out Successfully");
-    navigate("/login");
-  };
+  const { logout } = useAuth();
 
   return (
     <>

@@ -2,7 +2,15 @@ import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 
 const messages = [
-  `Notes is a cloud based Notes app build to store user's notes anytime, anywhere on the cloud with easy access to their notes.`,
+  `As a Full Stack Developer, I possess an impressive arsenal of skills in React.js,Redux Tailwind CSS, JavaScript, Node.js, Express.js, Firebase, HTML, CSS, Styled Component and Material UI`,
+  ` I have developed multiple projects which helped me to enhance my skills. `,
+  `Yes, having your strong base really helps and hence I am open to adapting to whichever framework is required.`,
+  `I believe Project Based Learning is the best approach to learn anything.`,
+  `Hence, I've got projects in all the different technologies that I've learned over time.`,
+  `By the way, when I'm not coding, you'll find me reading non-fiction, or watching UFC, or playing chess : )For fetching the notes of the logged in user Custom Express APIs are used.`,
+];
+const features = [
+ `Notes is a cloud based Notes app build to store user's notes anytime, anywhere on the cloud with easy access to their notes.`,
   `The App is build using the popular technologies like React JS MongoDB, Express Js and NodeJS.`,
   `Tailwind is Used as the CSS Framework for styling the App.`,
   `shadcn-ui is used as the component library for the App with radix-ui.`,
@@ -10,15 +18,6 @@ const messages = [
   `ALl the forms are completely typeSafe with ZOD and react-hook-form.`,
   `Vite JS is used as the bundler`,
   `For fetching the notes of the logged in user Custom Express APIs are used.`,
-];
-
-const features = [
-  `The app uses Express Api to fetch all the data.`,
-  ` MongoDb is used as the database to save and fetch all the
-  data.`,
-  `The user can create read update and delete notes on the app.`,
-  `The app uses function based react components.`,
-  `It is completely Device Responsive and accessibilty optimized`,
 ];
 
 const About = () => {

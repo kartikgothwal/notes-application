@@ -4,24 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 import AuthLinks from "./AuthLinks";
-
-const navLinks = [
-  {
-    id: 1,
-    name: "Home",
-    link: "/",
-  },
-  {
-    id: 2,
-    name: "Profile",
-    link: "/profile",
-  },
-  {
-    id: 3,
-    name: "About Me",
-    link: "/about",
-  },
-];
+import { useAuth } from "@/components/context/AuthContext";
 
 interface NavigationProps {
   ulClass: string;
@@ -30,7 +13,15 @@ interface NavigationProps {
 
 const Navigation: FC<NavigationProps> = ({ ulClass, handleClick }) => {
   const location = useLocation();
+  const { isAuthenticated } = useAuth(); // Get authentication state
+  const navLinks = [
+    { id: 1, name: "Home", link: "/" },
+    { id: 3, name: "About Me", link: "/about" },
+  ];
 
+  if (isAuthenticated) {
+    navLinks.splice(1, 0, { id: 2, name: "Profile", link: "/profile" });
+  }
   return (
     <ul className={ulClass}>
       <ul className="flex flex-col items-center justify-start flex-1 gap-2 md:gap-5 md:flex-row">

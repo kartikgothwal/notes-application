@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "./context/AuthContext";
 
 const HOST = import.meta.env.VITE_BACKEND_URI;
 
@@ -37,10 +38,9 @@ interface ErrorResponse {
 }
 
 const LoginForm = () => {
-  const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,7 +63,8 @@ const LoginForm = () => {
       localStorage.setItem("userId", res?.data?.id);
 
       toast.success(res.data.message);
-      navigate("/");
+
+      login(res.data.authToken);
     } catch (error) {
       console.error("🚀 ~ onSubmit ~ error:", error);
       if (axios.isAxiosError(error)) {

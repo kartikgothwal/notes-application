@@ -3,6 +3,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import HamBurgerMenu from "./HamBurgerMenu";
 import Navigation from "./Navigation";
 import { Link } from "react-router-dom";
+import { getTokenVerify } from "@/utils/getTokenVerify";
 
 const Navbar = () => {
   const [navOpen, setNavOpen] = useState<boolean>(false);
@@ -10,7 +11,6 @@ const Navbar = () => {
   const handleClick = () => {
     setNavOpen((prevValue) => !prevValue);
   };
-
   return (
     <>
       <div className="fixed w-full max-w-[100vw] h-16 z-50 bg-background border-b-2 border-input">
@@ -20,10 +20,11 @@ const Navbar = () => {
               <Link to="/" className="text-transparent">
                 Notes
               </Link>
-              <Link to="/profile" className="text-transparent">
-                Profile
-              </Link>
-
+              {getTokenVerify() ? (
+                <Link to="/profile" className="text-transparent">
+                  Profile
+                </Link>
+              ) : null}
             </p>
           </div>
           <Navigation ulClass="hidden md:flex flex-1 justify-between" />
