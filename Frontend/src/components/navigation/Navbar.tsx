@@ -17,7 +17,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-full px-3 mx-auto md:px-1 max-w-screen-3xl md:gap-20">
           <div className=" text-[2.2rem] text duration-500 font-semibold group cursor-pointer">
             <p className="animatedHeading font-signature">
-              <Link to="/" className="text-transparent">
+              <Link to="/dashboard" className="text-transparent">
                 Notes
               </Link>
               {getTokenVerify() ? (

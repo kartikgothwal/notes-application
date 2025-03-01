@@ -1,6 +1,5 @@
-import { FC, useState, useContext } from "react";
+import { FC, useState } from "react";
 import { Edit, Trash } from "lucide-react";
-
 import {
   Card,
   CardContent,
@@ -11,17 +10,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import AlertModal from "@/components/modals/alert-modal";
 import ToolTipBox from "@/components/ui/tool-tip-box";
-import { NoteContext } from "@/providers/note-provider";
 import { Note } from "@/types";
 
 interface NoteitemProps {
   note: Note;
   updateNote: (note: Note) => void;
+  deleteNote: (id: string) => void;
 }
 
-const Noteitem: FC<NoteitemProps> = ({ note, updateNote }) => {
-  const context = useContext(NoteContext);
-  const { deleteNote } = context;
+const Noteitem: FC<NoteitemProps> = ({ note, updateNote, deleteNote }) => {
   const [open, setOpen] = useState(false);
 
   const delete_Note = async (id: string) => {

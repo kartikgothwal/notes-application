@@ -1,17 +1,12 @@
 import { ToasterSuccess } from "@/utils/toast";
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   login: (token: string) => void;
   logout: () => void;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,18 +17,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
   const login = (token: string) => {
     localStorage.setItem("token", token);
     setIsAuthenticated(true);
     setTimeout(() => {
-      navigate("/");
+      navigate("/dashboard");
     }, 500);
   };
 
@@ -46,7 +34,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, setIsAuthenticated }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -6,7 +6,6 @@ dotenv.config();
 
 const fetchuser = (req: Request, res: Response, next: NextFunction) => {
   const token = req.header("auth-token");
-  console.log("🚀 ~ fetchuser ~ token:", token);
   if (!token) {
     return res.status(401).json({
       success: false,

@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from "react";
+import { FC, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { NoteContext } from "@/providers/note-provider";
+
 import { Note } from "@/types";
 
 const HOST = import.meta.env.VITE_BACKEND_URI;
@@ -41,11 +41,14 @@ type NoteFormValues = z.infer<typeof formSchema>;
 interface NotesFormProps {
   initialData: Note | null;
   handleSubmit: () => void;
+  refetch: () => void;
 }
 
-const NotesForm: FC<NotesFormProps> = ({ initialData, handleSubmit }) => {
-  const context = useContext(NoteContext);
-  const { fetchNotes } = context;
+const NotesForm: FC<NotesFormProps> = ({
+  initialData,
+  handleSubmit,
+  refetch,
+}) => {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<NoteFormValues>({
@@ -81,7 +84,7 @@ const NotesForm: FC<NotesFormProps> = ({ initialData, handleSubmit }) => {
         await axios.post(`${HOST}/api/notes/addnote`, data, options);
       }
       toast.success(toastMessage);
-      fetchNotes();
+      refetch();
     } catch (error) {
       toast.error("Something went wrong");
     } finally {

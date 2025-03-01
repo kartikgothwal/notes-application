@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import Loader from "./Loader";
-const HOST = import.meta.env.VITE_BACKEND_URI;
+import { PostRequestHandler } from "@/axios/PostRequestHandler";
 
 const ProtectedRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -15,14 +15,9 @@ const ProtectedRoute = () => {
           return;
         }
 
-        const response = await fetch(`${HOST}/api/auth/verify`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await PostRequestHandler(`api/auth/verify`, {}, token);
 
-        if (response.ok) {
+        if (response.status === 200) {
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);

@@ -13,14 +13,17 @@ interface NavigationProps {
 
 const Navigation: FC<NavigationProps> = ({ ulClass, handleClick }) => {
   const location = useLocation();
-  const { isAuthenticated } = useAuth(); // Get authentication state
-  const navLinks = [
-    { id: 1, name: "Home", link: "/" },
-    { id: 3, name: "About Me", link: "/about" },
-  ];
+  const { isAuthenticated } = useAuth();
+  const navLinks = [{ id: 1, name: "About Me", link: "/about" }];
 
   if (isAuthenticated) {
-    navLinks.splice(1, 0, { id: 2, name: "Profile", link: "/profile" });
+    navLinks.splice(
+      0,
+      1,
+      { id: 1, name: "Dashboard", link: "/dashboard" },
+      { id: 2, name: "Profile", link: "/profile" },
+      { id: 3, name: "About Me", link: "/about" }
+    );
   }
   return (
     <ul className={ulClass}>

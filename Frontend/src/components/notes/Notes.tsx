@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { IoMdCheckmark, IoMdSearch } from "react-icons/io";
@@ -7,7 +7,6 @@ import { Separator } from "@/components/ui/separator";
 import NoteModal from "@/components/modals/note-modal";
 import Heading from "@/components/ui/heading";
 import ToolTipBox from "@/components/ui/tool-tip-box";
-import { NoteContext } from "@/providers/note-provider";
 import { Note } from "@/types";
 import { Input } from "@/components/ui/input";
 import { HiOutlineXMark } from "react-icons/hi2";
@@ -20,13 +19,17 @@ import {
 } from "../ui/dropdown-menu";
 import { Card } from "../ui/card";
 import useDebounce from "@/hooks/useDebounce";
+import {
+  useDeleteMutationQueries,
+  useGetQueries,
+} from "@/apiquery/useApiQuery";
+import ToastErrorHandler from "@/utils/ToastErrorHandler";
+import { ToasterSuccess } from "@/utils/toast";
 
 const Notes = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState<string | null>(null);
   const debounceValue = useDebounce(search, 1000);
-  const context = useContext(NoteContext);
-  const { notes, fetchNotes, searchNote } = context;
   const [open, setOpen] = useState(false);
   const [modalProps, setModalProps] = useState<Note | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -34,14 +37,20 @@ const Notes = () => {
     setModalProps(data);
     setOpen(true);
   };
+  const { data: NotesData, refetch } = useGetQueries(
+    "fetchallnotes",
+    `api/notes/fetchallnotes?search=${debounceValue || ""}`
+  );
 
+  const { mutate: deleteMutation } = useDeleteMutationQueries(
+    "deleteNote",
+    "api/notes/deletenote"
+  );
+  const { notes } = NotesData?.data || [];
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      fetchNotes();
-    } else {
-      navigate("/login");
+    if (localStorage.getItem("token") && notes?.length == 0) {
+      refetch();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -51,37 +60,48 @@ const Notes = () => {
     }
     if (debounceValue === null) {
       return;
-    }
-    if (debounceValue.trim() !== "") {
-      searchNote(debounceValue);
     } else {
-      fetchNotes();
+      refetch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounceValue]);
 
   const uniqueCategories: string[] = [
-    ...new Set(notes?.map((item) => item.category)),
+    ...new Set((notes as Note[])?.map((item: Note): string => item.category)),
   ];
   const filteredNotes = notes?.filter(
-    (note) =>
+    (note: { category: string | null }) =>
       note.category === selectedCategory ||
       selectedCategory === null ||
       selectedCategory === ""
   );
+  const deleteNote = async (id: string) => {
+    deleteMutation(id, {
+      onSuccess: (response) => {
+        if (response.status == 200) {
+          ToasterSuccess(response.data.message);
+          refetch();
+        }
+      },
+      onError: (error) => {
+        ToastErrorHandler(error);
+      },
+    });
+  };
   return (
     <>
       <NoteModal
         isOpen={open}
-        onClose={() => setOpen(false)}
+        onClose={(): void => setOpen(false)}
         initialData={modalProps}
+        refetch={refetch}
       />
 
       <div className="container">
         <div className="flex items-center justify-between mt-10 mb-4">
           <Heading title="Notes" />
           <Button
-            onClick={() => openModal(null)}
+            onClick={(): void => openModal(null)}
             size="sm"
             className="hidden sm:block"
           >
@@ -89,7 +109,7 @@ const Notes = () => {
           </Button>
           <ToolTipBox tip="Create a note">
             <Button
-              onClick={() => openModal(null)}
+              onClick={(): void => openModal(null)}
               size="icon"
               className="rounded-full sm:hidden"
             >
@@ -127,7 +147,7 @@ const Notes = () => {
                       type="text"
                       placeholder="Search Notes by title"
                       className="pl-10"
-                      onChange={(e) => {
+                      onChange={(e: ChangeEvent<HTMLInputElement>): void => {
                         setSearch(e.target.value);
                       }}
                     />
@@ -173,11 +193,12 @@ const Notes = () => {
 
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3 grid-rows-[masonary] grid-flow-dense">
               {filteredNotes &&
-                filteredNotes.map((note) => {
+                filteredNotes.map((note: Note) => {
                   return (
                     <div key={note?._id}>
                       <NoteItem
                         note={note}
+                        deleteNote={(id: string) => deleteNote(id)}
                         updateNote={() => openModal(note)}
                       />
                     </div>

@@ -5,7 +5,6 @@ import { toast } from "react-hot-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-import axios, { AxiosError } from "axios";
 
 import {
   Form,
@@ -19,8 +18,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-
-const HOST = import.meta.env.VITE_BACKEND_URI;
+import { usePostMutationQueries } from "@/apiquery/useApiQuery";
+import ToastErrorHandler from "@/utils/ToastErrorHandler";
 
 const passwordSchema = z
   .string()
@@ -41,16 +40,14 @@ const formSchema = z
 
 type SignUpFormValues = z.infer<typeof formSchema>;
 
-interface ErrorResponse {
-  message: string;
-}
-
 const SignUpForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-
+  const { mutate: SignUpMutation, isPending } = usePostMutationQueries(
+    "login",
+    "api/auth/signup"
+  );
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -68,38 +65,17 @@ const SignUpForm = () => {
   };
 
   const onSubmit = async (data: SignUpFormValues) => {
-    try {
-      setLoading(true);
-      const options = {
-        headers: {
-          "Content-Type": "application/json",
-          "Login-token": localStorage.getItem("token") || "",
-        },
-      };
-      const res = await axios.post(
-        `${HOST}/api/auth/createuser`,
-        data,
-        options
-      );
-      localStorage.setItem("token", res.data.authToken);
-
-      toast.success(res.data.message);
-      navigate("/");
-    } catch (error) {
-      console.log("🚀 ~ onSubmit ~ error:", error);
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<ErrorResponse>;
-        if (axiosError.response && axiosError.response.data) {
-          toast.error(axiosError.response.data.message);
-        } else {
-          toast.error("An error occurred");
-        }
-      } else {
-        toast.error("An error occurred");
-      }
-    } finally {
-      setLoading(false);
-    }
+    SignUpMutation(data, {
+      onSuccess(response) {
+        localStorage.setItem("token", response?.data.authToken);
+        localStorage.setItem("userId", response?.data.id);
+        toast.success(response?.data.message);
+        navigate("/dashboard");
+      },
+      onError(error) {
+        ToastErrorHandler(error);
+      },
+    });
   };
 
   return (
@@ -122,7 +98,7 @@ const SignUpForm = () => {
                     <FormControl>
                       <Input
                         type="text"
-                        disabled={loading}
+                        disabled={isPending}
                         placeholder="Username"
                         {...field}
                       />
@@ -140,7 +116,7 @@ const SignUpForm = () => {
                     <FormControl>
                       <Input
                         type="email"
-                        disabled={loading}
+                        disabled={isPending}
                         placeholder="Email"
                         {...field}
                       />
@@ -159,21 +135,21 @@ const SignUpForm = () => {
                       <div className="relative">
                         <Input
                           type={showPassword ? "text" : "password"}
-                          disabled={loading}
+                          disabled={isPending}
                           placeholder="Password"
                           {...field}
                           className="pr-10"
                         />
                         <button
                           type="button"
-                          disabled={loading}
+                          disabled={isPending}
                           className="absolute inset-y-0 grid place-items-center right-5 opacity-80 focus:opacity-100"
                           onClick={() => toggleview("pass")}
                         >
                           <EyeOff
                             size={20}
                             className={`${
-                              loading ? "text-input" : "text-foreground"
+                              isPending ? "text-input" : "text-foreground"
                             } absolute transition-all duration-200 ${
                               showPassword ? "scale-100" : "scale-0"
                             }`}
@@ -181,7 +157,7 @@ const SignUpForm = () => {
                           <Eye
                             size={20}
                             className={`${
-                              loading ? "text-input" : "text-foreground"
+                              isPending ? "text-input" : "text-foreground"
                             } absolute transition-all duration-200 ${
                               !showPassword ? "scale-100" : "scale-0"
                             }`}
@@ -203,21 +179,21 @@ const SignUpForm = () => {
                       <div className="relative">
                         <Input
                           type={showConfirmPassword ? "text" : "password"}
-                          disabled={loading}
+                          disabled={isPending}
                           placeholder="Confirm Password"
                           {...field}
                           className="pr-10"
                         />
                         <button
                           type="button"
-                          disabled={loading}
+                          disabled={isPending}
                           className="absolute inset-y-0 grid place-items-center right-5 opacity-80 focus:opacity-100"
                           onClick={() => toggleview("cpass")}
                         >
                           <EyeOff
                             size={20}
                             className={`${
-                              loading ? "text-input" : "text-foreground"
+                              isPending ? "text-input" : "text-foreground"
                             } absolute transition-all duration-200 ${
                               showConfirmPassword ? "scale-100" : "scale-0"
                             }`}
@@ -225,7 +201,7 @@ const SignUpForm = () => {
                           <Eye
                             size={20}
                             className={`${
-                              loading ? "text-input" : "text-foreground"
+                              isPending ? "text-input" : "text-foreground"
                             } absolute transition-all duration-200 ${
                               !showConfirmPassword ? "scale-100" : "scale-0"
                             }`}
@@ -240,11 +216,11 @@ const SignUpForm = () => {
             </div>
             <div className="flex flex-col items-start my-3 md:flex-row it md:items-center md:justify-between gap-y-3 md:gap-y-0">
               <div className="flex gap-2 mr-auto">
-                <Button disabled={loading} type="submit">
+                <Button disabled={isPending} type="submit">
                   SignUp
                 </Button>
                 <Button
-                  disabled={loading}
+                  disabled={isPending}
                   type="reset"
                   onClick={() => form.reset()}
                 >
@@ -255,9 +231,9 @@ const SignUpForm = () => {
                 <p className="flex items-center text-base sm:text-lg text-accent-foreground/50 text- ">
                   <span>Have an Accout ?</span>
                   <Link
-                    to={loading ? "/signup" : "/login"}
+                    to={isPending ? "/signup" : "/login"}
                     className={`'pb-[2px] ml-2 text-sm sm:text-base border-b border-b-current ${
-                      loading
+                      isPending
                         ? "text-input"
                         : "text-accent-foreground/90 hover:text-accent-foreground"
                     }`}
