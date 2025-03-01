@@ -20,6 +20,7 @@ import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { usePostMutationQueries } from "@/apiquery/useApiQuery";
 import ToastErrorHandler from "@/utils/ToastErrorHandler";
+import { useAuth } from "./context/AuthContext";
 
 const passwordSchema = z
   .string()
@@ -41,7 +42,8 @@ const formSchema = z
 type SignUpFormValues = z.infer<typeof formSchema>;
 
 const SignUpForm = () => {
-  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { mutate: SignUpMutation, isPending } = usePostMutationQueries(
@@ -67,10 +69,9 @@ const SignUpForm = () => {
   const onSubmit = async (data: SignUpFormValues) => {
     SignUpMutation(data, {
       onSuccess(response) {
-        localStorage.setItem("token", response?.data.authToken);
         localStorage.setItem("userId", response?.data.id);
         toast.success(response?.data.message);
-        navigate("/dashboard");
+        login(response?.data.authToken);
       },
       onError(error) {
         ToastErrorHandler(error);

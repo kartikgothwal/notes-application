@@ -15,7 +15,6 @@ const Navigation: FC<NavigationProps> = ({ ulClass, handleClick }) => {
   const location = useLocation();
   const { isAuthenticated } = useAuth();
   const navLinks = [{ id: 1, name: "About Me", link: "/about" }];
-
   if (isAuthenticated) {
     navLinks.splice(
       0,
