@@ -23,14 +23,11 @@ const App = () => {
     verifyToken();
     async function verifyToken() {
       const token = localStorage.getItem("token");
-      console.log("🚀 ~ verifyToken ~ token:", token, location?.pathname);
-      if (token) {
+       if (token) {
         if (location?.pathname == "/") {
-          console.log("🚀 ~ verifyToken ~ location:", location);
-          navigate("/dashboard");
+           navigate("/dashboard");
         }
-        console.log("🚀 ~ verifyToken ~ token: ____inside", token);
-        try {
+         try {
           const response = await PostRequestHandler(
             "api/auth/verify",
             {},

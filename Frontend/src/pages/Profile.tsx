@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { AxiosError } from "axios";
+import axios,  from "axios";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
+import ToastErrorHandler from "@/utils/ToastErrorHandler";
 
 const HOST = import.meta.env.VITE_BACKEND_URI;
 
@@ -26,10 +27,6 @@ const formSchema = z.object({
 });
 
 type UserFormValues = z.infer<typeof formSchema>;
-
-interface ErrorResponse {
-  message: string;
-}
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
@@ -79,8 +76,6 @@ const Profile = () => {
   }, [setValue, userId, token]);
 
   const onSubmit = async (data: UserFormValues) => {
-    console.log("Form submitted:", data);
-
     try {
       setLoading(true);
       const res = await axios.put(`${HOST}/api/user/updatedetails`, data, {
@@ -89,79 +84,69 @@ const Profile = () => {
           "auth-token": token || "",
         },
       });
-
-      toast.success("User details updated successfully");
-      console.log("🚀 ~ onSubmit ~ res:", res);
+      if (res.status === 200) {
+        toast.success("User details updated successfully");
+      } else {
+        throw new Error("Failed to update user details");
+      }
     } catch (error) {
       console.error("Error updating user details:", error);
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<ErrorResponse>;
-        if (axiosError.response?.data) {
-          toast.error(axiosError.response.data.message);
-        } else {
-          toast.error("An error occurred");
-        }
-      } else {
-        toast.error("An error occurred");
-      }
-    } finally {
-      setLoading(false);
+      ToastErrorHandler(error);
     }
+
+    return (
+      <div className="px-4 space-y-6 sm:px-6">
+        <Heading title="User Details" className="my-3" />
+        <Separator className="mb-6" />
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-8">
+            <Card>
+              <CardContent className="space-y-6 py-2">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input {...register("name")} placeholder="E.g. Jane Doe" />
+                  {errors.name && (
+                    <p className="text-red-500">{errors.name.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    {...register("email")}
+                    placeholder="E.g. jane@example.com"
+                    readOnly
+                  />
+                  {errors.email && (
+                    <p className="text-red-500">{errors.email.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Biography</Label>
+                  <Textarea
+                    {...register("bio")}
+                    placeholder="Enter your bio"
+                    className="mt-1"
+                    style={{ minHeight: "100px" }}
+                  />
+                  {errors.bio && (
+                    <p className="text-red-500">{errors.bio.message}</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="pt-6">
+            <Button type="submit" disabled={loading}>
+              {loading ? "Saving..." : "Save"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    );
   };
-
-  return (
-    <div className="px-4 space-y-6 sm:px-6">
-      <Heading title="User Details" className="my-3" />
-      <Separator className="mb-6" />
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-8">
-          <Card>
-            <CardContent className="space-y-6 py-2">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input {...register("name")} placeholder="E.g. Jane Doe" />
-                {errors.name && (
-                  <p className="text-red-500">{errors.name.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  {...register("email")}
-                  placeholder="E.g. jane@example.com"
-                  readOnly
-                />
-                {errors.email && (
-                  <p className="text-red-500">{errors.email.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="bio">Biography</Label>
-                <Textarea
-                  {...register("bio")}
-                  placeholder="Enter your bio"
-                  className="mt-1"
-                  style={{ minHeight: "100px" }}
-                />
-                {errors.bio && (
-                  <p className="text-red-500">{errors.bio.message}</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="pt-6">
-          <Button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save"}
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
 };
-
 export default Profile;
