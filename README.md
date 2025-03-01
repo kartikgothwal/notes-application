@@ -23,6 +23,9 @@
 - mongoose
 - bcryptjs
 - jsonwebtoken
+- Morgan
+- Helmet
+
 
 ---
 
