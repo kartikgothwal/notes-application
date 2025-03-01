@@ -53,6 +53,7 @@ export const SignUp = async (req: Request, res: Response): Promise<any> => {
       success,
       message: "User Registered Successfully",
       authToken,
+      id: user.id,
     });
   } catch (error: unknown) {
     if (error instanceof Error) {

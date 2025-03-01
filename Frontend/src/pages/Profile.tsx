@@ -17,7 +17,6 @@ const HOST = import.meta.env.VITE_BACKEND_URI;
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid Email Address"),
-
   name: z.string().optional(),
   bio: z
     .string()
@@ -50,8 +49,6 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      if (!userId || !token) return;
-
       try {
         setLoading(true);
         const res = await axios.get(`${HOST}/api/user/${userId}`, {
@@ -92,61 +89,58 @@ const Profile = () => {
     } catch (error) {
       console.error("Error updating user details:", error);
       ToastErrorHandler(error);
+    } finally {
+      setLoading(false);
     }
-
-    return (
-      <div className="px-4 space-y-6 sm:px-6">
-        <Heading title="User Details" className="my-3" />
-        <Separator className="mb-6" />
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-8">
-            <Card>
-              <CardContent className="space-y-6 py-2">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input {...register("name")} placeholder="E.g. Jane Doe" />
-                  {errors.name && (
-                    <p className="text-red-500">{errors.name.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    {...register("email")}
-                    placeholder="E.g. jane@example.com"
-                    readOnly
-                  />
-                  {errors.email && (
-                    <p className="text-red-500">{errors.email.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Biography</Label>
-                  <Textarea
-                    {...register("bio")}
-                    placeholder="Enter your bio"
-                    className="mt-1"
-                    style={{ minHeight: "100px" }}
-                  />
-                  {errors.bio && (
-                    <p className="text-red-500">{errors.bio.message}</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="pt-6">
-            <Button type="submit" disabled={loading}>
-              {loading ? "Saving..." : "Save"}
-            </Button>
-          </div>
-        </form>
-      </div>
-    );
   };
+
+  return (
+    <div className="px-4 space-y-6 sm:px-6">
+      <Heading title="User Details" className="my-3" />
+      <Separator className="mb-6" />
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-8">
+          <Card>
+            <CardContent className="space-y-6 py-2">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input {...register("name")} placeholder="E.g. Jane Doe" />
+                {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  {...register("email")}
+                  placeholder="E.g. jane@example.com"
+                  readOnly
+                />
+                {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="bio">Biography</Label>
+                <Textarea
+                  {...register("bio")}
+                  placeholder="Enter your bio"
+                  className="mt-1"
+                  style={{ minHeight: "100px" }}
+                />
+                {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="pt-6">
+          <Button type="submit" disabled={loading}>
+            {loading ? "Saving..." : "Save"}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
 };
+
 export default Profile;
