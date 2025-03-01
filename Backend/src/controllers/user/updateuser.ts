@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { validationResult } from "express-validator";
 import User from "../../models/Users";
 
 export const UpdateUser = async (req: Request, res: Response): Promise<any> => {
@@ -10,8 +9,8 @@ export const UpdateUser = async (req: Request, res: Response): Promise<any> => {
         .status(400)
         .json({ success, message: "User not authenticated" });
     }
-    const userId = req.user.id;
-    const user = await User.findById(userId).select("-password");
+    const payload = req.body;
+    const user = await User.findOneAndUpdate({ email: payload.email }, payload);
     success = true;
     return res.json({
       success,

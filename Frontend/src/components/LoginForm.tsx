@@ -50,7 +50,6 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    console.log("🚀 ~ onSubmit ~ data:", data);
     try {
       setLoading(true);
       const options = {
@@ -61,7 +60,6 @@ const LoginForm = () => {
       };
       const res = await axios.post(`${HOST}/api/auth/login`, data, options);
       localStorage.setItem("token", res.data.authToken);
-      console.log("🚀 ~ onSubmit ~ res:", res);
       localStorage.setItem("userId", res?.data?.id);
 
       toast.success(res.data.message);

@@ -2,10 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import User from "../../models/Users";
 
-export const GetUser = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const GetUser = async (req: Request, res: Response): Promise<any> => {
   let success = false;
   try {
     if (!req.user) {

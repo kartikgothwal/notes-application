@@ -11,7 +11,6 @@ import { NoteContext } from "@/providers/note-provider";
 import { Note } from "@/types";
 import { Input } from "@/components/ui/input";
 import { HiOutlineXMark } from "react-icons/hi2";
-
 import NoteItem from "./Noteitem";
 import {
   DropdownMenu,
@@ -24,7 +23,7 @@ import useDebounce from "@/hooks/useDebounce";
 
 const Notes = () => {
   const navigate = useNavigate();
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState<string | null>(null);
   const debounceValue = useDebounce(search, 1000);
   const context = useContext(NoteContext);
   const { notes, fetchNotes, searchNote } = context;
@@ -46,13 +45,21 @@ const Notes = () => {
   }, []);
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    if (!localStorage.getItem("token")) {
+      navigate("/login");
+      return;
+    }
+    if (debounceValue === null) {
+      return;
+    }
+    if (debounceValue.trim() !== "") {
       searchNote(debounceValue);
     } else {
-      navigate("/login");
+      fetchNotes();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounceValue]);
+
   const uniqueCategories: string[] = [
     ...new Set(notes?.map((item) => item.category)),
   ];

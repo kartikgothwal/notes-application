@@ -1,74 +1,102 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { Eye, EyeOff } from "lucide-react";
 
 const HOST = import.meta.env.VITE_BACKEND_URI;
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid Email Address"),
-  password: z
+
+  name: z.string().optional(),
+  bio: z
     .string()
-    .min(6, "Password should be atleast 8 characters")
-    .max(16, "Password can only have a maximum of 16 characters"),
+    .min(10, "Bio should be at least 10 characters")
+    .max(50, "Bio can only have a maximum of 50 characters")
+    .optional(),
 });
 
-type LoginFormValues = z.infer<typeof formSchema>;
+type UserFormValues = z.infer<typeof formSchema>;
 
 interface ErrorResponse {
   message: string;
 }
 
 const Profile = () => {
-  const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<LoginFormValues>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<UserFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      password: "",
+      name: "",
+      bio: "",
     },
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
-    console.log("🚀 ~ onSubmit ~ data:", data);
+  const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (!userId || !token) return;
+
+      try {
+        setLoading(true);
+        const res = await axios.get(`${HOST}/api/user/${userId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": token || "",
+          },
+        });
+
+        setValue("email", res.data.user.email);
+        setValue("name", res.data.user.name);
+        setValue("bio", res.data.user.bio);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        toast.error("Failed to fetch user details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserDetails();
+  }, [setValue, userId, token]);
+
+  const onSubmit = async (data: UserFormValues) => {
+    console.log("Form submitted:", data);
+
     try {
       setLoading(true);
-      const options = {
+      const res = await axios.put(`${HOST}/api/user/updatedetails`, data, {
         headers: {
           "Content-Type": "application/json",
-          "Login-token": localStorage.getItem("token") || "",
+          "auth-token": token || "",
         },
-      };
-      const res = await axios.post(`${HOST}/api/auth/login`, data, options);
-      localStorage.setItem("token", res.data.authToken);
+      });
 
-      toast.success(res.data.message);
-      navigate("/");
+      toast.success("User details updated successfully");
+      console.log("🚀 ~ onSubmit ~ res:", res);
     } catch (error) {
-      console.error("🚀 ~ onSubmit ~ error:", error);
+      console.error("Error updating user details:", error);
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ErrorResponse>;
-        if (axiosError.response && axiosError.response.data) {
+        if (axiosError.response?.data) {
           toast.error(axiosError.response.data.message);
         } else {
           toast.error("An error occurred");
@@ -82,96 +110,56 @@ const Profile = () => {
   };
 
   return (
-    <div className="container max-w-4xl py-4 mx-auto md:py-10">
-      <Heading title="Update User Details" />
-      <Separator className="mt-4 mb-8" />
-      <div className="max-w-lg mx-auto">
-        <Form {...form}>
-          <form
-            onSubmit={form.control.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
-            <div className="flex flex-col gap-2 md:gap-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        disabled={loading}
-                        placeholder="Email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+    <div className="px-4 space-y-6 sm:px-6">
+      <Heading title="User Details" className="my-3" />
+      <Separator className="mb-6" />
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-8">
+          <Card>
+            <CardContent className="space-y-6 py-2">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input {...register("name")} placeholder="E.g. Jane Doe" />
+                {errors.name && (
+                  <p className="text-red-500">{errors.name.message}</p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          disabled={loading}
-                          placeholder="Password"
-                          {...field}
-                          className="pr-10"
-                        />
-                        <button
-                          type="button"
-                          disabled={loading}
-                          className="absolute inset-y-0 grid place-items-center right-5 opacity-80 focus:opacity-100"
-                          onClick={() => setShowPassword((prev) => !prev)}
-                        >
-                          <EyeOff
-                            size={20}
-                            className={`${
-                              loading ? "text-input" : "text-foreground"
-                            } absolute transition-all duration-200 ${
-                              showPassword ? "scale-100" : "scale-0"
-                            }`}
-                          />
-                          <Eye
-                            size={20}
-                            className={`${
-                              loading ? "text-input" : "text-foreground"
-                            } absolute transition-all duration-200 ${
-                              !showPassword ? "scale-100" : "scale-0"
-                            }`}
-                          />
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex flex-col items-start my-3 md:flex-row it md:items-center md:justify-between gap-y-3 md:gap-y-0">
-              <div className="flex gap-2 mr-auto">
-                <Button disabled={loading} type="submit">
-                  Update
-                </Button>
-                <Button
-                  disabled={loading}
-                  type="reset"
-                  onClick={() => form.reset()}
-                >
-                  Reset
-                </Button>
               </div>
-            </div>
-          </form>
-        </Form>
-      </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  {...register("email")}
+                  placeholder="E.g. jane@example.com"
+                  readOnly
+                />
+                {errors.email && (
+                  <p className="text-red-500">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="bio">Biography</Label>
+                <Textarea
+                  {...register("bio")}
+                  placeholder="Enter your bio"
+                  className="mt-1"
+                  style={{ minHeight: "100px" }}
+                />
+                {errors.bio && (
+                  <p className="text-red-500">{errors.bio.message}</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="pt-6">
+          <Button type="submit" disabled={loading}>
+            {loading ? "Saving..." : "Save"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };

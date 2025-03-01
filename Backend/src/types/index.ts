@@ -21,5 +21,6 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  date: Date;
+  bio?: string;
+  image?: string;
 }
